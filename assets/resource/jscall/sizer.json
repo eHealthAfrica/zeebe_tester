@@ -1,0 +1,7 @@
+{
+    "id": "sizer",
+    "name": "Sizes a JS object. Pretty useless.",
+    "entrypoint": "sizeOf",
+    "script": "function sizeOf(b){var d=[];b=[b];for(var c=0;b.length;){var a=b.pop();if(\"boolean\"===typeof a)c+=4;else if(\"string\"===typeof a)c+=2*a.length;else if(\"number\"===typeof a)c+=8;else if(\"object\"===typeof a&&-1===d.indexOf(a)){d.push(a);for(var e in a)b.push(a[e])}}return c};",
+    "arguments": ["obj"]
+}

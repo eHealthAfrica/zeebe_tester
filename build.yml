@@ -1,0 +1,7 @@
+version: "2.1"
+services:
+  zeebe_tester:
+    image: ehealthafrica/zeebe_tester
+    build: ./build
+    stdin_open: true
+    tty: true

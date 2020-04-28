@@ -1,0 +1,7 @@
+{
+    "id": "strictadder",
+    "name": "Adder with Type Checking",
+    "entrypoint": "f",
+    "script": "function adder(a,b){return a+b}function f(a,b){return adder(a,b)};",
+    "arguments": {"a": "int", "b": "int"}
+}

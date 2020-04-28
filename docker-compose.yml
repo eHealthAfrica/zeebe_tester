@@ -1,0 +1,96 @@
+version: "2.1"
+
+networks:
+  zeebe_network:
+    driver: bridge
+
+services:
+  tester:
+    image: ehealthafrica/zeebe_tester
+    command: start
+    # environment:
+    #   CONSUMER_URL: http://something
+    #   CONSUMER_USER: username
+    #   CONSUMER_PASSWORD: password
+    #   ZEEBE_ADDRESS: ${ZEEBE_ADDRESS}
+    #   ZEEBE_AUDIENCE: ${ZEEBE_AUDIENCE}
+    #   ZEEBE_CLIENT_ID: ${ZEEBE_CLIENT_ID}
+    #   ZEEBE_CLIENT_SECRET: ${ZEEBE_CLIENT_SECRET}
+    #   ZEEBE_AUTHORIZATION_SERVER_URL: ${ZEEBE_AUTHORIZATION_SERVER_URL}
+    volumes:
+      - ./assets:/code/assets
+    depends_on:
+      - zeebe
+      - consumer
+    networks:
+      - zeebe_network
+
+  consumer:
+    image: ehealthafrica/aether-stream-consumer
+    environment:
+      # consumer settings
+      CONSUMER_NAME: 'STREAM'
+      # TENANCY_HEADER: x-oauth-realm
+      # ADMIN_USER: "user"
+      # ADMIN_PW: "zebee"
+      # redis
+      REDIS_PASSWORD: password
+      REDIS_DB: 0
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # kafka settings
+      KAFKA_CONFIG_PATH: /code/conf/consumer/kafka.json
+      KAFKA_URL: ${KAFKA_URL}
+      SECURITY.PROTOCOL: SASL_SSL
+      SASL.MECHANISM: PLAIN
+      SASL.USERNAME: ${KAFKA_SASL_USERNAME}
+      SASL.PASSWORD: ${KAFKA_SASL_PASSWORD}
+      EXPOSE_PORT: 9013
+    depends_on:
+      - zeebe
+      - redis
+    command: start
+    ports:
+      - 9013:9013
+    networks:
+      - zeebe_network
+
+
+  redis:
+    image: redis:alpine
+    command: >
+      redis-server
+      --requirepass password
+      --appendonly yes
+      --auto-aof-rewrite-percentage 100
+      --auto-aof-rewrite-min-size 64mb
+    networks:
+      - zeebe_network
+
+  zeebe:
+    container_name: zeebe_broker
+    image: camunda/zeebe:0.23.0
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+    ports:
+      - "26500:26500"
+      - "9600:9600"
+      - "5701:5701"
+    volumes:
+      - ./lib/zeebe-hazelcast-exporter-0.8.0-jar-with-dependencies.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+      - ./conf/application.yaml:/usr/local/zeebe/config/application.yaml
+    networks:
+      - zeebe_network
+
+  monitor:
+    container_name: zeebe-simple-monitor
+    image: camunda/zeebe-simple-monitor:latest
+    environment:
+      - zeebe.client.broker.contactPoint=zeebe:26500
+      - zeebe.worker.hazelcast.connection=zeebe:5701
+    ports:
+      - "8082:8082"
+    depends_on:
+      - zeebe
+    networks:
+      - zeebe_network

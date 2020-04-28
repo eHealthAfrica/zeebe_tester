@@ -1,0 +1,7 @@
+{
+    "id": "isodd",
+    "name": "Is it odd?",
+    "entrypoint": "f",
+    "script": "function f(a){return 0!=a%2};",
+    "arguments": {"value": "int"}
+}

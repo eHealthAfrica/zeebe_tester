@@ -1,0 +1,5 @@
+{
+    "id": "default",
+    "name": "A Zeebe Complete with no hard coded values",
+    "url": "zeebe:26500"
+}

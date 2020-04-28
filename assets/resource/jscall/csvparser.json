@@ -1,0 +1,12 @@
+{
+  "id": "csvparser",
+  "name": "CSV Parser",
+  "entrypoint": "f",
+  "script": "function f(a){var b=json2csv.Parser,c={fields:[\"a\",\"b\"]};try{return(new b(c)).parse(a)}catch(d){console.error(d)}};",
+  "arguments": [
+    "jsonBody"
+  ],
+  "libraries": [
+    "https://cdn.jsdelivr.net/npm/json2csv@4.2.1/dist/json2csv.umd.js"
+  ]
+}
