@@ -1,0 +1,5 @@
+eha-jsonpath
+grpcio
+requests
+watchdog
+zeebe-grpc
