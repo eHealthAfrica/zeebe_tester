@@ -161,7 +161,7 @@ class Helper(object):
             LOG.critical(f'Unexpected Critical Error: {type(err)}: {err}')
 
     def _get_file_contents(self, path, is_json=True):
-        with open(path) as f:
+        with open(path, 'rb') as f:
             if is_json:
                 return json.load(f)
             else:
@@ -176,8 +176,16 @@ class Helper(object):
             LOG.info('We cannot _yet_ automatically delete BPMNs from the brokers')
         elif _file_type is FileType.BPMN:
             LOG.debug('Working on adding BPMN')
+            self.add_bpmn(_id, _contents)
         else:
             self._update(_resource, _id, _contents)
+
+    def add_bpmn(self, _id, contents):
+        try:
+            res = next(self.zeebe_connection.deploy_workflow(_id, contents))
+            LOG.debug(res)
+        except Exception as err:
+            LOG.critical(err)
 
     def _delete(self, resource_type, _id):
         try:

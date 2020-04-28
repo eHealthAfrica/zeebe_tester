@@ -26,7 +26,7 @@ services:
       - zeebe_network
 
   consumer:
-    image: ehealthafrica/aether-stream-consumer
+    image: ehealthafrica/aether-stream-consumer:0.0.1
     environment:
       # consumer settings
       CONSUMER_NAME: 'STREAM'

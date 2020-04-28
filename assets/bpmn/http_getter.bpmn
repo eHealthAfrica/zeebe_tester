@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1h9i0o0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
+  <bpmn:process id="Process_08ac3bo" isExecutable="true">
+    <bpmn:subProcess id="SubProcess_16whzrt">
+      <bpmn:incoming>SequenceFlow_1nmpq2p</bpmn:incoming>
+      <bpmn:startEvent id="StartEvent_13lm35w" name="start-flow">
+        <bpmn:outgoing>SequenceFlow_0wuoogi</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:subProcess id="SubProcess_1465pa0">
+        <bpmn:incoming>SequenceFlow_1mn94an</bpmn:incoming>
+        <bpmn:endEvent id="EndEvent_0pkgg4t">
+          <bpmn:incoming>SequenceFlow_1s9hm28</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:startEvent id="StartEvent_0db40ct">
+          <bpmn:outgoing>SequenceFlow_0eaxtwi</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_1s9hm28" sourceRef="Task_04dqc9w" targetRef="EndEvent_0pkgg4t" />
+        <bpmn:sequenceFlow id="SequenceFlow_0eaxtwi" sourceRef="StartEvent_0db40ct" targetRef="Task_04dqc9w" />
+        <bpmn:serviceTask id="Task_04dqc9w" name="Get Iterable from HTTP">
+          <bpmn:extensionElements>
+            <zeebe:taskHeaders>
+              <zeebe:header />
+            </zeebe:taskHeaders>
+            <zeebe:ioMapping>
+              <zeebe:input source="=url" target="url" />
+              <zeebe:input source="=method" target="method" />
+              <zeebe:input source="=basic_auth" target="basic_auth" />
+              <zeebe:input source="=query_params" target="query_params" />
+            </zeebe:ioMapping>
+            <zeebe:taskDefinition type="rest-worker" retries="3" />
+          </bpmn:extensionElements>
+          <bpmn:incoming>SequenceFlow_0eaxtwi</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_1s9hm28</bpmn:outgoing>
+        </bpmn:serviceTask>
+      </bpmn:subProcess>
+      <bpmn:boundaryEvent id="IntermediateThrowEvent_0t4b80z" cancelActivity="false" attachedToRef="Task_1soxr70">
+        <bpmn:outgoing>SequenceFlow_1mn94an</bpmn:outgoing>
+        <bpmn:timerEventDefinition>
+          <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">= period</bpmn:timeCycle>
+        </bpmn:timerEventDefinition>
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1mn94an" sourceRef="IntermediateThrowEvent_0t4b80z" targetRef="SubProcess_1465pa0" />
+      <bpmn:sequenceFlow id="SequenceFlow_0wuoogi" sourceRef="StartEvent_13lm35w" targetRef="Task_1soxr70" />
+      <bpmn:receiveTask id="Task_1soxr70" name="NullTask" messageRef="Message_046bqy9">
+        <bpmn:incoming>SequenceFlow_0wuoogi</bpmn:incoming>
+      </bpmn:receiveTask>
+      <bpmn:textAnnotation id="TextAnnotation_0btuc4c">
+        <bpmn:text>job_name: for subsequent cancel
+requestPeriod: Timer Period
+url: the URL
+method: the method
+basic_auth: dict[user, password]
+query_params: dict
+result_collection: the key from the iterable</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_0p1ltt4" sourceRef="StartEvent_13lm35w" targetRef="TextAnnotation_0btuc4c" />
+    </bpmn:subProcess>
+    <bpmn:startEvent id="StartEvent_1uzy3yv" name="start-rest">
+      <bpmn:outgoing>SequenceFlow_1nmpq2p</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_046bqy9" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1nmpq2p" sourceRef="StartEvent_1uzy3yv" targetRef="SubProcess_16whzrt" />
+    <bpmn:endEvent id="EndEvent_1i67kr6" name="cancelled">
+      <bpmn:incoming>SequenceFlow_09tne6d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_09tne6d" sourceRef="IntermediateThrowEvent_1dfpozo" targetRef="EndEvent_1i67kr6" />
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_1dfpozo" name="stop-rest" attachedToRef="SubProcess_16whzrt">
+      <bpmn:outgoing>SequenceFlow_09tne6d</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_046bqy9" />
+    </bpmn:boundaryEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_046bqy9" name="force-rest">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=url" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_08ac3bo">
+      <bpmndi:BPMNShape id="ServiceTask_1hgeo7n_di" bpmnElement="Task_04dqc9w">
+        <dc:Bounds x="1090" y="660" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_16whzrt_di" bpmnElement="SubProcess_16whzrt" isExpanded="true">
+        <dc:Bounds x="570" y="80" width="930" height="790" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0btuc4c_di" bpmnElement="TextAnnotation_0btuc4c">
+        <dc:Bounds x="600" y="240" width="200" height="124" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1w33ikm_di" bpmnElement="StartEvent_1uzy3yv">
+        <dc:Bounds x="162" y="457" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="500" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0p1ltt4_di" bpmnElement="Association_0p1ltt4">
+        <di:waypoint x="682" y="447" />
+        <di:waypoint x="692" y="364" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1ru90oq_di" bpmnElement="StartEvent_13lm35w">
+        <dc:Bounds x="662" y="447" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="657" y="423" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1ishk31_di" bpmnElement="IntermediateThrowEvent_0t4b80z">
+        <dc:Bounds x="822" y="487" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1ln9vii_di" bpmnElement="SubProcess_1465pa0" isExpanded="true">
+        <dc:Bounds x="950" y="590" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0pkgg4t_di" bpmnElement="EndEvent_0pkgg4t">
+        <dc:Bounds x="1242" y="682" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0db40ct_di" bpmnElement="StartEvent_0db40ct">
+        <dc:Bounds x="990" y="672" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s9hm28_di" bpmnElement="SequenceFlow_1s9hm28">
+        <di:waypoint x="1190" y="700" />
+        <di:waypoint x="1242" y="700" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eaxtwi_di" bpmnElement="SequenceFlow_0eaxtwi">
+        <di:waypoint x="1026" y="690" />
+        <di:waypoint x="1058" y="690" />
+        <di:waypoint x="1058" y="700" />
+        <di:waypoint x="1090" y="700" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mn94an_di" bpmnElement="SequenceFlow_1mn94an">
+        <di:waypoint x="840" y="523" />
+        <di:waypoint x="840" y="690" />
+        <di:waypoint x="950" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wuoogi_di" bpmnElement="SequenceFlow_0wuoogi">
+        <di:waypoint x="698" y="465" />
+        <di:waypoint x="770" y="465" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nmpq2p_di" bpmnElement="SequenceFlow_1nmpq2p">
+        <di:waypoint x="198" y="475" />
+        <di:waypoint x="570" y="475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1i67kr6_di" bpmnElement="EndEvent_1i67kr6">
+        <dc:Bounds x="862" y="932" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="857" y="975" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09tne6d_di" bpmnElement="SequenceFlow_09tne6d">
+        <di:waypoint x="790" y="888" />
+        <di:waypoint x="790" y="950" />
+        <di:waypoint x="862" y="950" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1pl0sn0_di" bpmnElement="IntermediateThrowEvent_1dfpozo">
+        <dc:Bounds x="772" y="852" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="769" y="895" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_19i6zab_di" bpmnElement="Task_1soxr70">
+        <dc:Bounds x="770" y="425" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
