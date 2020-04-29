@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0mt66cy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
+  <bpmn:process id="simplest-message-subroutine" name="simplest-message-subroutine" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start On Message (simple-sub)">
+      <bpmn:outgoing>SequenceFlow_0tiwcur</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0mu6p8c" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1qm8e68" name="done">
+      <bpmn:incoming>SequenceFlow_1ctmy54</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="SubProcess_1nb3wqa">
+      <bpmn:incoming>SequenceFlow_0tiwcur</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ctmy54</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="= worker_ids" inputElement="worker_id" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="StartEvent_04dz6el">
+        <bpmn:outgoing>SequenceFlow_1wzxcwd</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:receiveTask id="Task_0v5vqjm" name="On Cancel&#10;(cancel-sub)" messageRef="Message_0volcle">
+        <bpmn:incoming>SequenceFlow_1wzxcwd</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0itb4a5</bpmn:outgoing>
+      </bpmn:receiveTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1wzxcwd" sourceRef="StartEvent_04dz6el" targetRef="Task_0v5vqjm" />
+      <bpmn:endEvent id="EndEvent_10auids">
+        <bpmn:incoming>SequenceFlow_0itb4a5</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0itb4a5" sourceRef="Task_0v5vqjm" targetRef="EndEvent_10auids" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0tiwcur" sourceRef="StartEvent_1" targetRef="SubProcess_1nb3wqa" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ctmy54" sourceRef="SubProcess_1nb3wqa" targetRef="EndEvent_1qm8e68" />
+  </bpmn:process>
+  <bpmn:message id="Message_0vu6h76" name="cancel-message">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= worker_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1p74vgo" name="simple-message" />
+  <bpmn:message id="Message_0mu6p8c" name="simple-sub" />
+  <bpmn:message id="Message_0volcle" name="cancel-sub">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= worker_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="simplest-message-subroutine">
+      <bpmndi:BPMNShape id="StartEvent_05kygjm_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="125" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1qm8e68_di" bpmnElement="EndEvent_1qm8e68">
+        <dc:Bounds x="722" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="728" y="205" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_0u741it_di" bpmnElement="Task_0v5vqjm">
+        <dc:Bounds x="440" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1nb3wqa_di" bpmnElement="SubProcess_1nb3wqa" isExpanded="true">
+        <dc:Bounds x="320" y="80" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_04dz6el_di" bpmnElement="StartEvent_04dz6el">
+        <dc:Bounds x="360" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tiwcur_di" bpmnElement="SequenceFlow_0tiwcur">
+        <di:waypoint x="215" y="180" />
+        <di:waypoint x="320" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wzxcwd_di" bpmnElement="SequenceFlow_1wzxcwd">
+        <di:waypoint x="396" y="180" />
+        <di:waypoint x="440" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_10auids_di" bpmnElement="EndEvent_10auids">
+        <dc:Bounds x="602" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0itb4a5_di" bpmnElement="SequenceFlow_0itb4a5">
+        <di:waypoint x="540" y="180" />
+        <di:waypoint x="602" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ctmy54_di" bpmnElement="SequenceFlow_1ctmy54">
+        <di:waypoint x="670" y="180" />
+        <di:waypoint x="722" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

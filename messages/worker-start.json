@@ -1,0 +1,9 @@
+{
+  "listener_name": "trigger-worker",
+  "variables": {
+    "worker_id":"one",
+    "url": "http://www3.septa.org/hackathon/TransitViewAll/",
+    "method": "get",
+    "period": "R/PT10S"
+  }
+}

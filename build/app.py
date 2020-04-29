@@ -28,6 +28,7 @@ from helper import Helper
 from logger import LOG
 from zb import ZeebeError
 
+START_TIMEOUT = 60
 
 HELPER = Helper()
 HANDLER = ChangeHandler(HELPER)
@@ -73,7 +74,23 @@ def update():
     HELPER.sync()
 
 
+def startup():
+    for x in range(START_TIMEOUT):
+        if test_connections():
+            LOG.debug(f'Found Brokers, waiting for startup to complete')
+            time.sleep(10)
+            return
+        else:
+            time.sleep(1)
+    LOG.error(f'System could not connect within {START_TIMEOUT} seconds.')
+    raise TimeoutError(f'System could not connect within {START_TIMEOUT} seconds.')
+
+
 if __name__ == '__main__':
-    test_connections()
+    LOG.debug(f'Starting')
+    startup()
+    LOG.debug(f'Getting Updates')
     update()
+    LOG.debug(f'Starting to Monitor')
     monitor()
+    LOG.debug(f'Stopping')

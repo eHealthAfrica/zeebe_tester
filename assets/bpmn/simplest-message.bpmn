@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0mt66cy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
+  <bpmn:process id="simplest-message" name="simplest-message" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start On Message (simple-message)">
+      <bpmn:outgoing>SequenceFlow_0b809t9</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1p74vgo" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1qm8e68" name="done">
+      <bpmn:incoming>SequenceFlow_145hzxl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0b809t9" sourceRef="StartEvent_1" targetRef="Task_0v5vqjm" />
+    <bpmn:sequenceFlow id="SequenceFlow_145hzxl" sourceRef="Task_0v5vqjm" targetRef="EndEvent_1qm8e68" />
+    <bpmn:receiveTask id="Task_0v5vqjm" name="On Cancel" messageRef="Message_0vu6h76">
+      <bpmn:incoming>SequenceFlow_0b809t9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_145hzxl</bpmn:outgoing>
+    </bpmn:receiveTask>
+  </bpmn:process>
+  <bpmn:message id="Message_0vu6h76" name="cancel-message">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="= worker_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1p74vgo" name="simple-message" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="simplest-message">
+      <bpmndi:BPMNShape id="StartEvent_05kygjm_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="153" y="122" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1qm8e68_di" bpmnElement="EndEvent_1qm8e68">
+        <dc:Bounds x="672" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="678" y="122" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b809t9_di" bpmnElement="SequenceFlow_0b809t9">
+        <di:waypoint x="215" y="97" />
+        <di:waypoint x="350" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_145hzxl_di" bpmnElement="SequenceFlow_145hzxl">
+        <di:waypoint x="450" y="97" />
+        <di:waypoint x="672" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_0u741it_di" bpmnElement="Task_0v5vqjm">
+        <dc:Bounds x="350" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

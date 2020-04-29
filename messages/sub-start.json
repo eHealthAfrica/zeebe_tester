@@ -1,0 +1,4 @@
+{
+  "listener_name": "simple-sub",
+  "variables": {"worker_ids": ["one", "two"]}
+}

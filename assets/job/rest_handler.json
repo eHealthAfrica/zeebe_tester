@@ -1,0 +1,5 @@
+{
+    "id": "rest_handler",
+    "name": "Default Stream Consumer Job",
+    "pipelines": ["rest_handler"]
+}
