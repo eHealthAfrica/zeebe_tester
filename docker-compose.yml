@@ -26,13 +26,11 @@ services:
       - zeebe_network
 
   consumer:
-    image: ehealthafrica/aether-stream-consumer:0.0.2
+    image: ehealthafrica/aether-stream-consumer:0.1.0
     environment:
       # consumer settings
       CONSUMER_NAME: 'STREAM'
-      # TENANCY_HEADER: x-oauth-realm
-      # ADMIN_USER: "user"
-      # ADMIN_PW: "zebee"
+
       # redis
       REDIS_PASSWORD: password
       REDIS_DB: 0
@@ -84,7 +82,11 @@ services:
 
   monitor:
     container_name: zeebe-simple-monitor
-    image: camunda/zeebe-simple-monitor:latest
+    image: camunda/zeebe-simple-monitor:0.18.0
+    volumes:
+      #  Fixes an issue with the max size of a message
+      #  should be fixed in 0.19
+      - ./lib/MessageEntity.class:/app/classes/io/zeebe/monitor/entity/MessageEntity.class
     environment:
       - zeebe.client.broker.contactPoint=zeebe:26500
       - zeebe.worker.hazelcast.connection=zeebe:5701
