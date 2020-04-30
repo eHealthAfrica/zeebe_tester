@@ -6,8 +6,11 @@ networks:
 
 services:
   tester:
-    image: ehealthafrica/zeebe_tester
+    extends:
+      file: build.yml
+      service: zeebe_tester
     command: start
+    # If you want to hook this up to a non local consumer & Zeebe Broker for CI/ etc
     # environment:
     #   CONSUMER_URL: http://something
     #   CONSUMER_USER: username
